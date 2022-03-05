@@ -1,5 +1,6 @@
 #include <math.h>
 #include "pav_analysis.h"
+#include <stdio.h>
 
 
 float compute_power(const float *x, unsigned int N) {
@@ -32,3 +33,19 @@ float compute_zcr(const float *x, unsigned int N, float fm) {
     }
     return amp_cons*sum;;
 }
+
+float compute_power_window(const float *x, unsigned int N, const float *ventana){
+    
+    float sum = 0;
+    float den = 0;
+    for(int i = 0; i<N; i++){
+       
+        sum = sum + ((x[i]*ventana[i])*(x[i]*ventana[i]));
+        den = den + (ventana[i] * ventana[i]);
+        
+    }   
+    return 10*log10(sum/den);   
+
+
+}
+
