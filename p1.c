@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
     float *x_i;
     FILE  *fpWave;
     FILE  *fres;
+
     
     
 
@@ -35,8 +36,9 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error al abrir el fichero txt de entrada %s (%s)\n", argv[2], strerror(errno));
         return -1;
     }
-    N = 0.01 * fm;
-    M = tdesp * fm;
+ 
+    N = tlong* fm;
+    M = tdesp* fm;
     if ((buffer = malloc(N * sizeof(*buffer))) == 0 ||
         (x = malloc(N * sizeof(*x))) == 0) {
         fprintf(stderr, "Error al ubicar los vectores (%s)\n", strerror(errno));
@@ -48,45 +50,28 @@ int main(int argc, char *argv[]) {
    
    
     trm = 0;
+     int pos=0;
+    int source=0;
     
-    int proba, res;
     while (lee_wave(buffer, sizeof(*buffer), N, fpWave) == N) {
         for (int n = 0; n < N; n++){
             x[n] = buffer[n] / (float) (1 << 15);
-            //hamming[n] = 0.53836 - (0.46164*(cos((2*3.1416*n)/(N-1))));
+            hamming[n] = 0.53836 - (0.46164*(cos((2*3.1416*n)/(N-1))));
             //proba = (trm*M)+n;
-            //printf("%d\n", proba);
-            
-            
+            //printf("%d\n", proba);    
         }
-      
-        
-       
-
-   
-        
-        fprintf(fres,"%d\t%f\t%f\t%f\n", trm, compute_power(x, N),
+        fprintf(fres,"%d\t%f\t%f\t%f", trm, compute_power(x, N),
                                         compute_am(x, N),
                                         compute_zcr(x, N, fm));
-               
-        
+        ;      
+        fseek(fpWave,pos,source);
+        pos=pos+M;
+        fprintf(fres,"\t%f\n", compute_power_window(x, N, hamming));
         trm += 1;
         //printf("%d\n", trm);
     }
-    /*int pos=0;
-    int source=0;
-    while(lee_wave(buffer, sizeof(*buffer), N, fpWave)==N){
-        
-        for(int n=0;n<N;n++){
-            x[n] = buffer[n] / (float) (1 << 15);
-            hamming[n] = 0.53836 - (0.46164*(cos((2*3.1416*n)/(N-1))));
-        }
-        fseek(fpWave,pos,source);
-        pos=pos+M;
-        fprintf(fres,"%d\t%f\n", trm, compute_power_window(x, N, hamming));
-        trm++;
-    }
-    */
+    
+    
     unsigned int mono = mono_channel(fpWave);
     //printf("%x\n", mono);
     unsigned int bps = bits_per_sample(fpWave);
@@ -111,3 +96,20 @@ int main(int argc, char *argv[]) {
     
     return 0;
 }
+
+/*void print_window_power(int N, int M){
+    int pos=0;
+    int source=0;
+    while(lee_wave(buffer, sizeof(*buffer), N, fpWave)==N){
+        
+        for(int n=0;n<N;n++){
+            x[n] = buffer[n] / (float) (1 << 15);
+            hamming[n] = 0.53836 - (0.46164*(cos((2*3.1416*n)/(N-1))));
+        }
+        fseek(fpWave,pos,source);
+        pos=pos+M;
+        fprintf(fres,"\t%f\n", compute_power_window(x, N, hamming));
+        trm++;
+    }
+}*/
+
