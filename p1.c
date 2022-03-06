@@ -12,7 +12,9 @@ int main(int argc, char *argv[]) {
     float fm;
     int   N;
     int   M;
-    int   trm;
+    int   trm = 0;
+    int   pos=0;
+    int   source=0;
     float *x;
     short *buffer;
     float *hamming;
@@ -44,21 +46,12 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error al ubicar los vectores (%s)\n", strerror(errno));
         return -1;
     }
-    
 
-   
-   
-   
-    trm = 0;
-     int pos=0;
-    int source=0;
-    
     while (lee_wave(buffer, sizeof(*buffer), N, fpWave) == N) {
         for (int n = 0; n < N; n++){
             x[n] = buffer[n] / (float) (1 << 15);
             hamming[n] = 0.53836 - (0.46164*(cos((2*3.1416*n)/(N-1))));
-            //proba = (trm*M)+n;
-            //printf("%d\n", proba);    
+               
         }
         fprintf(fres,"%d\t%f\t%f\t%f", trm, compute_power(x, N),
                                         compute_am(x, N),
@@ -66,16 +59,16 @@ int main(int argc, char *argv[]) {
         ;      
         fseek(fpWave,pos,source);
         pos=pos+M;
+        
         fprintf(fres,"\t%f\n", compute_power_window(x, N, hamming));
         trm += 1;
-        //printf("%d\n", trm);
     }
     
     
     unsigned int mono = mono_channel(fpWave);
-    //printf("%x\n", mono);
+ 
     unsigned int bps = bits_per_sample(fpWave);
-    //printf("%d\n", bps);
+  
     if(mono != 1){
         printf("Error: no es monocanal\n");
         return -1;
@@ -88,7 +81,7 @@ int main(int argc, char *argv[]) {
         printf("Es mono canal y de 16 bits_per_sample\n");
     }
     
-    //unsigned int bits_sample = bits_per_sample(fpWave);
+ 
     cierra_wave(fpWave);
     fclose(fres);
     free(buffer);
