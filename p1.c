@@ -90,19 +90,5 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-/*void print_window_power(int N, int M){
-    int pos=0;
-    int source=0;
-    while(lee_wave(buffer, sizeof(*buffer), N, fpWave)==N){
-        
-        for(int n=0;n<N;n++){
-            x[n] = buffer[n] / (float) (1 << 15);
-            hamming[n] = 0.53836 - (0.46164*(cos((2*3.1416*n)/(N-1))));
-        }
-        fseek(fpWave,pos,source);
-        pos=pos+M;
-        fprintf(fres,"\t%f\n", compute_power_window(x, N, hamming));
-        trm++;
-    }
-}*/
+
 
